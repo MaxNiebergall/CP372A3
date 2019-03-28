@@ -31,14 +31,17 @@ public class LinkState {
 			gatewayRouters[i] = Integer.parseInt(gwrVals[i]);
 		}
 
-		ArrayList<Integer> to;
-		ArrayList<Integer> cost;
-		ArrayList<ArrayList<Integer>> nextHop;
+
 
 		for(int i=0; i<n; i++){
+			ArrayList<Integer> to;
+			ArrayList<Integer> cost;
+			ArrayList<Integer> hops;
+			ArrayList<ArrayList<Integer>> nextHop;
+
 			to = new ArrayList<Integer>();
 			cost = new ArrayList<Integer>();
-			//hops = new ArrayList<Integer>();
+			hops = new ArrayList<Integer>();
 			nextHop = new ArrayList<ArrayList<Integer>>();
 
 			ArrayList<Integer[]> shortestPaths = dijkstra(adjMatrix, i);
@@ -54,14 +57,24 @@ public class LinkState {
 					while (shortestPaths.get(1)[prev] != i) {
 						prev = shortestPaths.get(1)[prev];
 					}
+					if(hops.size()==0){
+						hops.add(prev);
+					}
 					tempAdjMatrx[i][prev] = -1;
 
 					tempShortestPaths = dijkstra(tempAdjMatrx, i);
 					if(tempShortestPaths.get(0)[i] == cost.get(cost.size()-1)){
-						
+						while (shortestPaths.get(1)[prev] != i) {
+							prev = shortestPaths.get(1)[prev];
+						}
+						hops.add(prev);
 					}
 				}while(tempShortestPaths.get(0)[i] == cost.get(cost.size()-1));
+
+				nextHop.add(hops);
 			}
+
+			printTable(i, to, cost, nextHop);
 
 
 
@@ -122,7 +135,7 @@ public class LinkState {
 	}
 
 
-		public void printTable(List to, List cost, ArrayList<ArrayList<Integer>> nextHop) {
+		static public void printTable(Integer from, List to, List cost, ArrayList<ArrayList<Integer>> nextHop) {
 
 			System.out.println("Forwarding Table for " + from);
 			System.out.println("\tTo\tCost\tNext\tHop");
