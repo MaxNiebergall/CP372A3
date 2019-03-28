@@ -7,6 +7,9 @@ import java.util.Comparator;
 
 public class LinkState {
 	static int n;
+	int from;
+
+
 
 	public static void main(String args[]) {
 		Scanner sc = new Scanner(new InputStreamReader(System.in));
@@ -28,9 +31,47 @@ public class LinkState {
 			gatewayRouters[i] = Integer.parseInt(gwrVals[i]);
 		}
 
+		ArrayList<Integer> to;
+		ArrayList<Integer> cost;
+		ArrayList<ArrayList<Integer>> nextHop;
+
+		for(int i=0; i<n; i++){
+			to = new ArrayList<Integer>();
+			cost = new ArrayList<Integer>();
+			//hops = new ArrayList<Integer>();
+			nextHop = new ArrayList<ArrayList<Integer>>();
+
+			ArrayList<Integer[]> shortestPaths = dijkstra(adjMatrix, i);
+			ArrayList<Integer[]> tempShortestPaths;
+			for(int rID =0; rID<gatewayRouters.length; rID++){
+				to.add(gatewayRouters[rID]);
+				cost.add(shortestPaths.get(0)[gatewayRouters[rID]]);
+
+				do {
+					Integer[][] tempAdjMatrx = adjMatrix.clone();
+					Integer prev = gatewayRouters[rID];
+					//While previous of previous is not the start, ie we are at the first hop
+					while (shortestPaths.get(1)[prev] != i) {
+						prev = shortestPaths.get(1)[prev];
+					}
+					tempAdjMatrx[i][prev] = -1;
+
+					tempShortestPaths = dijkstra(tempAdjMatrx, i);
+					if(tempShortestPaths.get(0)[i] == cost.get(cost.size()-1)){
+						
+					}
+				}while(tempShortestPaths.get(0)[i] == cost.get(cost.size()-1));
+			}
+
+
+
+		}
+
+
+
 	}
 
-	public static void dijkstra(Integer[][] adjMatrix, int source) {
+	public static ArrayList<Integer[]> dijkstra(Integer[][] adjMatrix, int source) {
 			Integer[] dist = new Integer[n];
 			dist[source] = 0;
 			Integer[] prev = new Integer[n];
@@ -71,33 +112,17 @@ public class LinkState {
 					}
 				}
 			}
-		//TODO return {dist, prev};
+
+		ArrayList<Integer[]> returnable = new ArrayList<Integer[]>();
+			returnable.add(dist);
+			returnable.add(prev);
+
+			return returnable;
+
 	}
 
-	private class ForwardingTable {
 
-		int from;
-		ArrayList<Integer> to;
-		ArrayList<Integer> cost;
-		ArrayList<Integer> hops;
-		ArrayList<ArrayList<Integer>> nextHop;
-
-		ForwardingTable() {
-			to = new ArrayList<Integer>();
-			cost = new ArrayList<Integer>();
-			hops = new ArrayList<Integer>();
-			nextHop = new ArrayList<ArrayList<Integer>>();
-
-		}
-
-		ForwardingTable(List toO, List costO, List nextHopO, int from) {
-			this.from = from;
-			to = new ArrayList<Integer>(toO);
-			cost = new ArrayList<Integer>(costO);
-			nextHop = new ArrayList<ArrayList<Integer>>(nextHopO);
-		}
-
-		public void printTable() {
+		public void printTable(List to, List cost, ArrayList<ArrayList<Integer>> nextHop) {
 
 			System.out.println("Forwarding Table for " + from);
 			System.out.println("\tTo\tCost\tNext\tHop");
@@ -112,6 +137,6 @@ public class LinkState {
 
 		}
 
-	}
+
 
 }
