@@ -34,48 +34,44 @@ public class LinkState {
 			Integer[] dist = new Integer[n];
 			dist[source] = 0;
 			Integer[] prev = new Integer[n];
-			
-			class QCompare implements Comparator<Integer[]> {
 
+			class QCompare implements Comparator<Integer[]> {
 				@Override
 				public int compare(Integer o1[], Integer o2[]) {
 					//Double check this
 					return o1[1] - o2[1];
 				}
-				
+				public boolean equals(Integer o1[], Integer o2[]){
+					return o1[0] == o2[0];
+				}
 			}
-			 
-			PriorityQueue<Integer[]> Q = new PriorityQueue<Integer[]>(n, QCompare);
-			
-			
+
+			PriorityQueue<Integer[]> Q = new PriorityQueue<Integer[]>(n, new QCompare());
+
 			for(int vert =0; vert<n; vert++) {
 				if(vert != source) {
 					dist[vert] = Integer.MAX_VALUE;
 				}
 				prev[vert] = null;
-						Q.add(vert, dist[vert]);
-				
+						Q.add(new Integer[]{vert, dist[vert]});
 			}
-			
-			          
-			7          if v ≠ source
-			8              dist[v] ← INFINITY                 // Unknown distance from source to v
-			9          prev[v] ← UNDEFINED                    // Predecessor of v
-			10
-			
-			11         Q.add_with_priority(v, dist[v])
-			12
-			13
-			14     while Q is not empty:                      // The main loop
-			15         u ← Q.extract_min()                    // Remove and return best vertex
-			16         for each neighbor v of u:              // only v that are still in Q
-			17             alt ← dist[u] + length(u, v) 
-			18             if alt < dist[v]
-			19                 dist[v] ← alt
-			20                 prev[v] ← u
-			21                 Q.decrease_priority(v, alt)
-			22
-			23     return dist, prev
+
+			while (!Q.isEmpty()){
+				Integer u = Q.poll()[0];
+
+				for (int v=0; v<n; v++){
+					if(adjMatrix[u][v] >0) {
+						Integer alt = dist[u] + adjMatrix[u][v];
+						if(alt <dist[v]){
+							Q.remove(new Integer[]{v, dist[v]});
+							dist[v] = alt;
+							prev[v] = u;
+							Q.add(new Integer[]{v, dist[v]});
+						}
+					}
+				}
+			}
+		//TODO return {dist, prev};
 	}
 
 	private class ForwardingTable {
