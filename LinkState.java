@@ -185,9 +185,10 @@ public class LinkState {
         System.out.println("To\tCost\tNext Hop");
 
         for (int i = 0; i < to.size(); i++) {
-            System.out.print("" + (to.get(i) + 1) + "\t\t" + cost.get(i));
-            for (int j = 0; j < nextHop.get(i).size(); j++) {
-                System.out.print("\t" + (nextHop.get(i).get(j) + 1));
+            System.out.print("" + (to.get(i) + 1) + "\t" + cost.get(i));
+            System.out.print("\t" + (nextHop.get(i).get(0) + 1));
+            for (int j = 1; j < nextHop.get(i).size(); j++) {
+                System.out.print(",\t" + (nextHop.get(i).get(j) + 1));
             }
             System.out.println();
         }
